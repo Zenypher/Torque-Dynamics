@@ -1,12 +1,12 @@
-import { Suspense } from "react"
-
 import { listRegions } from "@lib/data/regions"
 import { listLocales } from "@lib/data/locales"
 import { getLocale } from "@lib/data/locale-actions"
 import { StoreRegion } from "@medusajs/types"
-import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import CartButton from "@modules/layout/components/cart-button"
 import SideMenu from "@modules/layout/components/side-menu"
+import DarkModeButton from "@modules/layout/components/dark-mode-button"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import Image from "next/image"
 
 export default async function Nav() {
   const [regions, locales, currentLocale] = await Promise.all([
@@ -16,51 +16,38 @@ export default async function Nav() {
   ])
 
   return (
-    <div className="sticky top-0 inset-x-0 z-50 group">
-      <header className="relative h-16 mx-auto border-b duration-200 bg-white border-ui-border-base">
-        <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
-          <div className="flex-1 basis-0 h-full flex items-center">
-            <div className="h-full">
-              <SideMenu regions={regions} locales={locales} currentLocale={currentLocale} />
-            </div>
-          </div>
+    <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-md flex flex-col items-center">
+      <div className="ferrari-gradient py-1.5 w-full">
+        <p className="text-center text-xs font-medium text-primary-foreground tracking-wide">
+          FREE SHIPPING ON ORDERS OVER $99 — SAME DAY DISPATCH
+        </p>
+      </div>
 
-          <div className="flex items-center h-full">
-            <LocalizedClientLink
-              href="/"
-              className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
-              data-testid="nav-store-link"
-            >
-              Medusa Store
-            </LocalizedClientLink>
-          </div>
-
-          <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-            <div className="hidden small:flex items-center gap-x-6 h-full">
-              <LocalizedClientLink
-                className="hover:text-ui-fg-base"
-                href="/account"
-                data-testid="nav-account-link"
-              >
-                Account
-              </LocalizedClientLink>
-            </div>
-            <Suspense
-              fallback={
-                <LocalizedClientLink
-                  className="hover:text-ui-fg-base flex gap-2"
-                  href="/cart"
-                  data-testid="nav-cart-link"
-                >
-                  Cart (0)
-                </LocalizedClientLink>
-              }
-            >
-              <CartButton />
-            </Suspense>
-          </div>
-        </nav>
-      </header>
-    </div>
+      <div className="container flex justify-between items-center gap-4 py-3">
+        <SideMenu
+          regions={regions}
+          locales={locales}
+          currentLocale={currentLocale}
+        />
+        <LocalizedClientLink
+          href="/"
+          className="flex items-center gap-2 shrink-0"
+        >
+          <Image
+            src="/td_logo.jpg"
+            alt="Torque Dynamics Logo"
+            width={128}
+            height={128}
+          />
+          <span className="font-bold font-display text-xl tracking-tight hidden sm:block">
+            Torque <span className="text-primary">Dynamics</span>
+          </span>
+        </LocalizedClientLink>
+        <div className="flex items-center gap-4">
+          <DarkModeButton />
+          <CartButton />
+        </div>
+      </div>
+    </header>
   )
 }
