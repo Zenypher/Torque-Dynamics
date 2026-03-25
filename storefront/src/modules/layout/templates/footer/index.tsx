@@ -11,7 +11,7 @@ export default async function Footer() {
   const productCategories = await listCategories()
 
   return (
-    <footer className="bg-surface-dark text-surface-dark-muted pt-16 pb-8">
+    <footer className="dark:bg-surface-dark dark:text-surface-dark-muted pt-16 pb-8">
       <div className="container">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
@@ -21,7 +21,7 @@ export default async function Footer() {
                   TD
                 </span>
               </div>
-              <span className="font-display font-bold text-lg text-surface-dark-text">
+              <span className="font-display font-bold text-lg dark:text-surface-dark-text">
                 Torque<span className="text-primary">Dynamics</span>
               </span>
             </div>
@@ -52,18 +52,18 @@ export default async function Footer() {
             },
           ].map((col) => (
             <div key={col.title}>
-              <h4 className="font-display font-semibold text-sm text-surface-dark-text mb-4">
+              <h4 className="font-display font-semibold text-sm dark:text-surface-dark-text mb-4">
                 {col.title}
               </h4>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link}>
-                    <a
+                    <LocalizedClientLink
                       href="#"
                       className="text-sm hover:text-primary transition-colors"
                     >
                       {link}
-                    </a>
+                    </LocalizedClientLink>
                   </li>
                 ))}
               </ul>
@@ -76,15 +76,24 @@ export default async function Footer() {
             © 2026 Torque Dynamics. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs">
-            <a href="#" className="hover:text-primary transition-colors">
+            <LocalizedClientLink
+              href="#"
+              className="hover:text-primary transition-colors"
+            >
               Privacy
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            </LocalizedClientLink>
+            <LocalizedClientLink
+              href="#"
+              className="hover:text-primary transition-colors"
+            >
               Terms
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            </LocalizedClientLink>
+            <LocalizedClientLink
+              href="#"
+              className="hover:text-primary transition-colors"
+            >
               Accessibility
-            </a>
+            </LocalizedClientLink>
           </div>
         </div>
       </div>

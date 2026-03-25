@@ -1,15 +1,23 @@
-import { loadEnv, defineConfig } from "@medusajs/framework/utils";
+import { loadEnv, defineConfig } from "@medusajs/framework/utils"
 
-loadEnv(process.env.NODE_ENV || "development", process.cwd());
+loadEnv(process.env.NODE_ENV || "development", process.cwd())
 
 // Patch for promotion rule query filter bug
 const buildPromotionRuleQueryFilterFromContext =
-  require("@medusajs/promotion/dist/utils/compute-actions/build-promotion-rule-query-filter-from-context").buildPromotionRuleQueryFilterFromContext;
+  require("@medusajs/promotion/dist/utils/compute-actions/build-promotion-rule-query-filter-from-context").buildPromotionRuleQueryFilterFromContext
 require("@medusajs/promotion/dist/utils/compute-actions/build-promotion-rule-query-filter-from-context").buildPromotionRuleQueryFilterFromContext =
-  async () => null;
+  async () => null
 
 module.exports = defineConfig({
   modules: [
+    {
+      resolve: "./src/modules/meilisearch",
+      options: {
+        host: process.env.MEILISEARCH_HOST!,
+        apiKey: process.env.MEILISEARCH_API_KEY!,
+        productIndexName: process.env.MEILISEARCH_PRODUCT_INDEX_NAME!,
+      },
+    },
     {
       resolve: "@medusajs/medusa/payment",
       options: {
@@ -18,6 +26,25 @@ module.exports = defineConfig({
             resolve: "@medusajs/medusa/payment-stripe",
             id: "stripe",
             options: { apiKey: process.env.STRIPE_API_KEY },
+          },
+        ],
+      },
+    },
+    {
+      resolve: "@medusajs/medusa/file",
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/file-s3",
+            id: "s3",
+            options: {
+              file_url: process.env.S3_FILE_URL,
+              access_key_id: process.env.S3_ACCESS_KEY_ID,
+              secret_access_key: process.env.S3_SECRET_ACCESS_KEY,
+              region: process.env.S3_REGION,
+              bucket: process.env.S3_BUCKET,
+              endpoint: process.env.S3_ENDPOINT,
+            },
           },
         ],
       },
@@ -45,4 +72,4 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     },
   },
-});
+})

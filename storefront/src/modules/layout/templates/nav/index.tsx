@@ -7,6 +7,8 @@ import SideMenu from "@modules/layout/components/side-menu"
 import DarkModeButton from "@modules/layout/components/dark-mode-button"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Image from "next/image"
+import SearchModal from "@modules/search/components/modal"
+import AccountButton from "@modules/layout/components/account-button"
 
 export default async function Nav() {
   const [regions, locales, currentLocale] = await Promise.all([
@@ -34,17 +36,19 @@ export default async function Nav() {
           className="flex items-center gap-2 shrink-0"
         >
           <Image
-            src="/td_logo.jpg"
+            src="/td_logo.png"
             alt="Torque Dynamics Logo"
             width={128}
             height={128}
           />
-          <span className="font-bold font-display text-xl tracking-tight hidden sm:block">
+          <span className="font-bold font-display text-2xl tracking-tight hidden sm:block dark:text-surface-dark-text">
             Torque <span className="text-primary">Dynamics</span>
           </span>
         </LocalizedClientLink>
+        <SearchModal />
         <div className="flex items-center gap-4">
           <DarkModeButton />
+          <AccountButton />
           <CartButton />
         </div>
       </div>

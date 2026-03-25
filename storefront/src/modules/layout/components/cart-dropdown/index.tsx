@@ -81,13 +81,13 @@ const CartDropdown = ({
       onMouseLeave={close}
     >
       <Popover className="relative h-full">
-        <PopoverButton className="h-10 w-10 hover:bg-surface-dark hover:text-surface-dark-text transition-bg duration-200 ease-in rounded-md flex items-center justify-center">
+        <PopoverButton className="h-10 w-10 hover:bg-surface-dark hover:text-surface-dark-text transition-bg duration-200 ease-in rounded-md flex items-center justify-center dark:bg-surface-dark">
           <LocalizedClientLink
             className="flex items-center "
             href="/cart"
             data-testid="nav-cart-link"
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-5 h-5 dark:text-surface-dark-text" />
             <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center">
               {totalItems}
             </span>
@@ -105,7 +105,7 @@ const CartDropdown = ({
         >
           <PopoverPanel
             static
-            className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white border-x border-b border-gray-200 w-[420px] text-ui-fg-base"
+            className="hidden small:block absolute top-[calc(100%+1px)] right-0 bg-white dark:bg-surface-dark border-x border-b border-gray-200 dark:border-surface-dark-muted w-[420px] text-ui-fg-base"
             data-testid="nav-cart-dropdown"
           >
             <div className="p-4 flex items-center justify-center">

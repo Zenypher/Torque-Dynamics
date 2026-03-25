@@ -1,6 +1,11 @@
 "use client"
 
-import { Popover, PopoverPanel, Transition } from "@headlessui/react"
+import {
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+  Transition,
+} from "@headlessui/react"
 import { ArrowRightMini, XMark } from "@medusajs/icons"
 import { Text, clx, useToggleState } from "@medusajs/ui"
 import { Fragment } from "react"
@@ -15,8 +20,6 @@ import MenuHamburger1 from "../icons/menu"
 const SideMenuItems = {
   Home: "/",
   Store: "/store",
-  Account: "/account",
-  Cart: "/cart",
 }
 
 type SideMenuProps = {
@@ -36,17 +39,17 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
           {({ open, close }) => (
             <>
               <div className="relative flex h-full">
-                <Popover.Button
+                <PopoverButton
                   data-testid="nav-menu-button"
-                  className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
+                  className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base dark:text-surface-dark-text"
                 >
                   <MenuHamburger1 />
-                </Popover.Button>
+                </PopoverButton>
               </div>
 
               {open && (
                 <div
-                  className="fixed inset-0 z-[50] bg-black/0 pointer-events-auto"
+                  className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-md pointer-events-auto"
                   onClick={close}
                   data-testid="side-menu-backdrop"
                 />
@@ -56,13 +59,13 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                 show={open}
                 as={Fragment}
                 enter="transition ease-out duration-150"
-                enterFrom="opacity-0"
-                enterTo="opacity-100 backdrop-blur-2xl"
+                enterFrom="opacity-0 -translate-x-4"
+                enterTo="opacity-100 translate-x-0"
                 leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 backdrop-blur-2xl"
-                leaveTo="opacity-0"
+                leaveFrom="opacity-100 translate-x-0"
+                leaveTo="opacity-0 -translate-x-4"
               >
-                <PopoverPanel className="flex flex-col absolute w-full pr-4 sm:pr-0 sm:w-1/3 2xl:w-1/4 sm:min-w-min h-[calc(100vh-1rem)] z-[51] inset-x-0 text-sm text-ui-fg-on-color m-2 backdrop-blur-2xl">
+                <PopoverPanel className="fixed inset-0 sm:inset-y-0 sm:left-0 h-full w-full sm:w-1/3 2xl:w-1/4 z-[70] text-sm text-ui-fg-on-color bg-[rgba(3,7,18,0.35)] backdrop-blur-2xl pointer-events-auto">
                   <div
                     data-testid="nav-menu-popup"
                     className="flex flex-col h-full bg-[rgba(3,7,18,0.5)] rounded-rounded justify-between p-6"
