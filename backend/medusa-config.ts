@@ -57,6 +57,10 @@ module.exports = defineConfig({
         defaultReviewStatus: "pending",
       },
     },
+    {
+      resolve: "@agilo/medusa-analytics-plugin",
+      options: {},
+    },
   ],
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,

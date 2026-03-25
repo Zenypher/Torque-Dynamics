@@ -15,7 +15,9 @@ export default function TrustBar() {
           {features.map((feat, i) => (
             <div
               key={feat.title}
-              className={`flex items-center gap-3 stagger-${i + 1}`}
+              className={`flex items-center gap-3 stagger-${
+                i + 1
+              } dark:text-surface-dark-text`}
             >
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <feat.icon className="w-5 h-5 text-primary" />

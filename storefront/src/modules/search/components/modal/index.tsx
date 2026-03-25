@@ -68,7 +68,7 @@ const Hit = ({ hit }: { hit: Hit }) => {
         height={128}
         className="text-[10px] aspect-square object-cover text-center bg-white"
       />
-      <div className="flex flex-col gap-y-1 py-2">
+      <div className="flex flex-col gap-y-1 py-2 line-clamp-4">
         <h3>{hit.title}</h3>
         <p className="text-sm text-gray-500">{hit.description}</p>
       </div>
