@@ -16,9 +16,12 @@ const DeleteButton = ({
 
   const handleDelete = async (id: string) => {
     setIsDeleting(true)
-    await deleteLineItem(id).catch((err) => {
+    try {
+      await deleteLineItem(id)
+    } catch (error) {
+      console.error("Error deleting item:", error)
       setIsDeleting(false)
-    })
+    }
   }
 
   return (

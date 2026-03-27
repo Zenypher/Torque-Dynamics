@@ -1,6 +1,5 @@
 import { Button } from "@headlessui/react"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
-import Image from "next/image"
 
 const Hero = () => {
   return (
@@ -35,14 +34,14 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-wrap gap-3">
-            <Button
-              className="ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide
+            <LocalizedClientLink href="/store">
+              <Button
+                className="ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide
           h-14 rounded-lg px-10 text-lg"
-            >
-              <LocalizedClientLink href="/store">
+              >
                 Shop All Parts
-              </LocalizedClientLink>
-            </Button>
+              </Button>
+            </LocalizedClientLink>
             <Button className="h-14 rounded-lg px-10 text-lg border text-surface-dark-text bg-surface-dark-text/10 hover:bg-surface-dark-text/20 hover:text-surface-dark-text">
               Find My Fit
             </Button>

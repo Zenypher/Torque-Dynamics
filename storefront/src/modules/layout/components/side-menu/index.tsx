@@ -49,7 +49,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
 
               {open && (
                 <div
-                  className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-md pointer-events-auto"
+                  className="fixed h-screen inset-0 z-[60] bg-black/50 pointer-events-auto "
                   onClick={close}
                   data-testid="side-menu-backdrop"
                 />
@@ -65,10 +65,10 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                 leaveFrom="opacity-100 translate-x-0"
                 leaveTo="opacity-0 -translate-x-4"
               >
-                <PopoverPanel className="fixed inset-0 sm:inset-y-0 sm:left-0 h-full w-full sm:w-1/3 2xl:w-1/4 z-[70] text-sm text-ui-fg-on-color bg-[rgba(3,7,18,0.35)] backdrop-blur-2xl pointer-events-auto">
+                <PopoverPanel className="fixed inset-0 sm:inset-y-0 sm:left-0 h-screen w-full sm:w-1/3 2xl:w-1/4 z-[70] text-sm text-ui-fg-on-color backdrop-blur-lg bg-background/80 pointer-events-auto">
                   <div
                     data-testid="nav-menu-popup"
-                    className="flex flex-col h-full bg-[rgba(3,7,18,0.5)] rounded-rounded justify-between p-6"
+                    className="flex flex-col h-full rounded-rounded justify-between p-6 text-foreground"
                   >
                     <div className="flex justify-end" id="xmark">
                       <button data-testid="close-menu-button" onClick={close}>

@@ -155,6 +155,7 @@ const AccountNav = ({
                   type="button"
                   onClick={handleLogout}
                   data-testid="logout-button"
+                  className="text-ui-fg-subtle hover:text-primary"
                 >
                   Log out
                 </button>

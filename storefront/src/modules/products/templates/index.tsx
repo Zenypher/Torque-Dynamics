@@ -11,6 +11,9 @@ import { notFound } from "next/navigation"
 import { HttpTypes } from "@medusajs/types"
 
 import ProductActionsWrapper from "./product-actions-wrapper"
+import LocalizedClientLink from "@modules/common/components/localized-client-link"
+import { ChevronRight } from "@medusajs/icons"
+import { RotateCcw, Shield, ShoppingCart, Truck } from "lucide-react"
 
 type ProductTemplateProps = {
   product: HttpTypes.StoreProduct
@@ -32,12 +35,26 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
   return (
     <>
       <div
-        className="content-container  flex flex-col small:flex-row small:items-start py-6 relative"
+        className="content-container flex-1 small:flex-row small:items-start py-6 relative"
         data-testid="product-container"
       >
+        <div className="container pt-4 pb-2">
+          <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <LocalizedClientLink
+              href="/"
+              className="hover:text-primary transition-colors"
+            >
+              Home
+            </LocalizedClientLink>
+            <ChevronRight className="w-3.5 h-3.5" />
+            <span className="text-foreground font-medium truncate">
+              {product.title}
+            </span>
+          </nav>
+        </div>
+
         <div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
           <ProductInfo product={product} />
-          <ProductTabs product={product} />
         </div>
         <div className="block w-full relative">
           <ImageGallery images={images} />
