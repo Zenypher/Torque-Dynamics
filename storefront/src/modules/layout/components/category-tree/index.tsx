@@ -11,10 +11,10 @@ const CategoryTree = ({ categories }: CategoryTreeProps) => {
   return (
     <ul className="flex justify-center items-center gap-6">
       {categories.map((category) => (
-        <li key={category.id} className="my-2">
+        <li key={category.id} className="flex text-center">
           <LocalizedClientLink
             href={`/categories/${category.handle}`}
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors "
           >
             {category.name}
           </LocalizedClientLink>

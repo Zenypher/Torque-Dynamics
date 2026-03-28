@@ -16,6 +16,7 @@ import LanguageSelect from "../language-select"
 import { HttpTypes } from "@medusajs/types"
 import { Locale } from "@lib/data/locales"
 import MenuHamburger1 from "../icons/menu"
+import CountryToggle from "../country-toggle"
 
 const SideMenuItems = {
   Home: "/",
@@ -29,7 +30,6 @@ type SideMenuProps = {
 }
 
 const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
-  const countryToggleState = useToggleState()
   const languageToggleState = useToggleState()
 
   return (
@@ -111,24 +111,7 @@ const SideMenu = ({ regions, locales, currentLocale }: SideMenuProps) => {
                           />
                         </div>
                       )}
-                      <div
-                        className="flex justify-between"
-                        onMouseEnter={countryToggleState.open}
-                        onMouseLeave={countryToggleState.close}
-                      >
-                        {regions && (
-                          <CountrySelect
-                            toggleState={countryToggleState}
-                            regions={regions}
-                          />
-                        )}
-                        <ArrowRightMini
-                          className={clx(
-                            "transition-transform duration-150",
-                            countryToggleState.state ? "-rotate-90" : ""
-                          )}
-                        />
-                      </div>
+                      <CountryToggle regions={regions} />
                       <Text className="flex justify-between txt-compact-small">
                         © {new Date().getFullYear()} Torque Dynamics. All rights
                         reserved.

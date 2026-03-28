@@ -46,11 +46,7 @@ const Item: React.FC<AccordionItemProps> = ({
   return (
     <AccordionPrimitive.Item
       {...props}
-      className={clx(
-        "border-grey-20 group border-t last:mb-0 last:border-b",
-        "py-3",
-        className
-      )}
+      className={clx("group border-b last:mb-0", "py-3", className)}
     >
       <AccordionPrimitive.Header className="px-1">
         <div className="flex flex-col">

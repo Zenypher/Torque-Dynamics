@@ -1,7 +1,7 @@
 import { Truck, Shield, RotateCcw, Headphones } from "lucide-react"
 
 const features = [
-  { icon: Truck, title: "Free Shipping", desc: "On orders over $99" },
+  { icon: Truck, title: "Free Shipping", desc: "On orders over €99" },
   { icon: Shield, title: "Fitment Guarantee", desc: "Or your money back" },
   { icon: RotateCcw, title: "Easy Returns", desc: "30-day hassle-free" },
   { icon: Headphones, title: "Expert Support", desc: "ASE-certified team" },

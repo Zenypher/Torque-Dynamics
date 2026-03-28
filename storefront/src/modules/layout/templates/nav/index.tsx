@@ -11,6 +11,7 @@ import SearchBar from "@modules/search/components/searchbar"
 import AccountButton from "@modules/layout/components/account-button"
 import { listCategories } from "@lib/data/categories"
 import CategoryTree from "@modules/layout/components/category-tree"
+import CountryToggle from "@modules/layout/components/country-toggle"
 
 export default async function Nav() {
   const [regions, locales, currentLocale, product_categories] =
@@ -30,11 +31,11 @@ export default async function Nav() {
     <header className="sticky top-0 z-50 border-b border-border bg-card/95 backdrop-blur-md">
       <div className="ferrari-gradient py-1.5 w-full">
         <p className="text-center text-xs font-medium text-primary-foreground tracking-wide">
-          FREE SHIPPING ON ORDERS OVER $99 — SAME DAY DISPATCH
+          FREE SHIPPING ON ORDERS OVER €99 — SAME DAY DISPATCH
         </p>
       </div>
 
-      <div className="container flex items-center gap-4 py-3">
+      <div className="container flex items-center justify-between gap-4 py-3">
         <LocalizedClientLink
           href="/"
           className="flex items-center gap-2 shrink-0"
@@ -49,8 +50,8 @@ export default async function Nav() {
             Torque <span className="text-primary">Dynamics</span>
           </span>
         </LocalizedClientLink>
-        <div className="flex items-center gap-4 ml-auto">
-          <SearchBar />
+        <SearchBar />
+        <div className="flex items-center gap-4">
           <DarkModeButton />
           <AccountButton />
           <CartButton />
@@ -66,6 +67,7 @@ export default async function Nav() {
             Shop All
           </LocalizedClientLink>
           <CategoryTree categories={product_categories} />
+          <CountryToggle regions={regions} />
         </div>
       </nav>
 

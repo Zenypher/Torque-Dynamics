@@ -12,6 +12,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import ProductPrice from "../product-price"
 import MobileActions from "./mobile-actions"
 import { useRouter } from "next/navigation"
+import { ShoppingCart } from "lucide-react"
 
 type ProductActionsProps = {
   product: HttpTypes.StoreProduct
@@ -37,6 +38,7 @@ export default function ProductActions({
   const searchParams = useSearchParams()
 
   const [options, setOptions] = useState<Record<string, string | undefined>>({})
+  const [quantity, setQuantity] = useState<number>(1)
   const [isAdding, setIsAdding] = useState(false)
   const countryCode = useParams().countryCode as string
 
@@ -92,6 +94,35 @@ export default function ProductActions({
     router.replace(pathname + "?" + params.toString())
   }, [selectedVariant, isValidVariant])
 
+  const maxQuantity = useMemo(() => {
+    if (!selectedVariant) {
+      return 10
+    }
+
+    if (!selectedVariant.manage_inventory) {
+      return 100
+    }
+
+    return selectedVariant.inventory_quantity ?? 0
+  }, [selectedVariant])
+
+  useEffect(() => {
+    if (!selectedVariant) {
+      setQuantity(1)
+      return
+    }
+
+    setQuantity((current) => {
+      if (current < 1) {
+        return 1
+      }
+      if (maxQuantity > 0 && current > maxQuantity) {
+        return maxQuantity
+      }
+      return current
+    })
+  }, [selectedVariant, maxQuantity])
+
   // check if the selected variant is in stock
   const inStock = useMemo(() => {
     // If we don't manage inventory, we can always add to cart
@@ -129,9 +160,12 @@ export default function ProductActions({
     try {
       await addToCart({
         variantId: selectedVariant.id,
-        quantity: 1,
+        quantity,
         countryCode,
       })
+
+      // after add to cart, you may optionally reset quantity to 1
+      setQuantity(1)
     } catch (error) {
       console.error("Error adding to cart:", error)
       // Optionally show an error toast/notification here
@@ -167,6 +201,62 @@ export default function ProductActions({
 
         <ProductPrice product={product} variant={selectedVariant} />
 
+        <div className="flex items-center gap-3">
+          <div className="flex items-center border border-border rounded-lg">
+            <button
+              type="button"
+              onClick={() => setQuantity((curr) => Math.max(1, curr - 1))}
+              disabled={isAdding || quantity <= 1}
+              className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Decrease quantity"
+            >
+              −
+            </button>
+
+            <input
+              type="number"
+              min={1}
+              max={maxQuantity}
+              value={quantity}
+              onChange={(e) => {
+                const value = Number(e.target.value)
+                if (Number.isNaN(value)) {
+                  setQuantity(1)
+                } else {
+                  setQuantity(Math.max(1, Math.min(maxQuantity, value)))
+                }
+              }}
+              className="w-10 h-10 text-center text-sm font-medium bg-transparent"
+              aria-label="Quantity"
+            />
+
+            <button
+              type="button"
+              onClick={() =>
+                setQuantity((curr) => Math.min(maxQuantity, curr + 1))
+              }
+              disabled={
+                isAdding ||
+                (selectedVariant?.manage_inventory
+                  ? quantity >= maxQuantity
+                  : false)
+              }
+              className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Increase quantity"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {selectedVariant?.manage_inventory && (
+          <p className="text-xs text-muted-foreground">
+            {maxQuantity > 0
+              ? `Only ${maxQuantity} left in stock`
+              : "Out of stock"}
+          </p>
+        )}
+
         <Button
           onClick={handleAddToCart}
           disabled={
@@ -174,18 +264,25 @@ export default function ProductActions({
             !selectedVariant ||
             !!disabled ||
             isAdding ||
-            !isValidVariant
+            !isValidVariant ||
+            quantity < 1 ||
+            quantity > maxQuantity
           }
           variant="primary"
-          className="w-full h-10"
+          className="w-full ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide h-12 rounded-md px-8 text-base"
           isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!selectedVariant && !options
-            ? "Select variant"
-            : !inStock || !isValidVariant
-            ? "Out of stock"
-            : "Add to cart"}
+          {!selectedVariant && !options ? (
+            "Select variant"
+          ) : !inStock || !isValidVariant ? (
+            "Out of stock"
+          ) : (
+            <>
+              <ShoppingCart className="w-4 h-4" />
+              Add to Cart
+            </>
+          )}
         </Button>
         <MobileActions
           product={product}
@@ -193,6 +290,9 @@ export default function ProductActions({
           options={options}
           updateOptions={setOptionValue}
           inStock={inStock}
+          quantity={quantity}
+          maxQuantity={maxQuantity}
+          setQuantity={setQuantity}
           handleAddToCart={handleAddToCart}
           isAdding={isAdding}
           show={!inView}

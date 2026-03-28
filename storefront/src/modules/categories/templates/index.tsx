@@ -14,11 +14,17 @@ export default function CategoryTemplate({
   sortBy,
   page,
   countryCode,
+  priceMin,
+  priceMax,
+  inStock,
 }: {
   category: HttpTypes.StoreProductCategory
   sortBy?: SortOptions
   page?: string
   countryCode: string
+  priceMin?: string
+  priceMax?: string
+  inStock?: "true" | "false"
 }) {
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
@@ -41,7 +47,13 @@ export default function CategoryTemplate({
       className="flex flex-col flex-1 small:flex-row small:items-start py-6 content-container"
       data-testid="category-container"
     >
-      <RefinementList sortBy={sort} data-testid="sort-by-container" />
+      <RefinementList
+        sortBy={sort}
+        priceMin={priceMin}
+        priceMax={priceMax}
+        inStock={inStock}
+        data-testid="sort-by-container"
+      />
       <div className="w-full">
         <div className="flex flex-row mb-8 text-2xl-semi gap-4">
           {parents &&
@@ -66,7 +78,7 @@ export default function CategoryTemplate({
         )}
         {category.category_children && (
           <div className="mb-8 text-base-large">
-            <ul className="grid grid-cols-1 gap-2">
+            <ul className="flex flex-wrap gap-6 justify-center">
               {category.category_children?.map((c) => (
                 <li key={c.id}>
                   <InteractiveLink href={`/categories/${c.handle}`}>
@@ -89,6 +101,9 @@ export default function CategoryTemplate({
             page={pageNumber}
             categoryId={category.id}
             countryCode={countryCode}
+            priceMin={priceMin}
+            priceMax={priceMax}
+            inStock={inStock}
           />
         </Suspense>
       </div>

@@ -9,6 +9,7 @@ import { HttpTypes } from "@medusajs/types"
 import Trash from "@modules/common/icons/trash"
 import ErrorMessage from "../error-message"
 import { SubmitButton } from "../submit-button"
+import { Tag } from "lucide-react"
 
 type DiscountCodeProps = {
   cart: HttpTypes.StoreCart & {
@@ -17,7 +18,6 @@ type DiscountCodeProps = {
 }
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
-  const [isOpen, setIsOpen] = React.useState(false)
   const [errorMessage, setErrorMessage] = React.useState("")
 
   const { promotions = [] } = cart
@@ -59,46 +59,32 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
     <div className="w-full flex flex-col">
       <div className="txt-medium">
         <form action={(a) => addPromotionCode(a)} className="w-full mb-5">
-          <Label className="flex gap-x-1 my-2 items-center">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              type="button"
-              className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
-              data-testid="add-discount-button"
-            >
-              Add Promotion Code(s)
-            </button>
-
-            {/* <Tooltip content="You can add multiple promotion codes">
-              <InformationCircleSolid color="var(--fg-muted)" />
-            </Tooltip> */}
-          </Label>
-
-          {isOpen && (
-            <>
-              <div className="flex w-full gap-x-2">
-                <Input
-                  className="size-full"
-                  id="promotion-input"
-                  name="code"
-                  type="text"
-                  autoFocus={false}
-                  data-testid="discount-input"
-                />
-                <SubmitButton
-                  variant="secondary"
-                  data-testid="discount-apply-button"
-                >
-                  Apply
-                </SubmitButton>
-              </div>
-
-              <ErrorMessage
-                error={errorMessage}
-                data-testid="discount-error-message"
+          <div className="flex gap-2 mt-1.5">
+            <div className="relative flex-1">
+              <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+              <Input
+                className="w-full h-9 pl-9 pr-3 rounded-lg border border-input bg-muted/50 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all disabled:opacity-50"
+                id="promotion-input"
+                name="code"
+                type="text"
+                autoFocus={false}
+                data-testid="discount-input"
+                placeholder="Enter code"
               />
-            </>
-          )}
+            </div>
+            <SubmitButton
+              className="border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+              variant="secondary"
+              data-testid="discount-apply-button"
+            >
+              Apply
+            </SubmitButton>
+          </div>
+
+          <ErrorMessage
+            error={errorMessage}
+            data-testid="discount-error-message"
+          />
         </form>
 
         {promotions.length > 0 && (

@@ -89,16 +89,63 @@ export const listProducts = async ({
  * This will fetch 100 products to the Next.js cache and sort them based on the sortBy parameter.
  * It will then return the paginated products based on the page and limit parameters.
  */
+type ProductFilters = {
+  priceMin?: number
+  priceMax?: number
+  inStock?: boolean
+}
+
+const applyFiltersToProducts = (
+  products: HttpTypes.StoreProduct[],
+  filters: ProductFilters
+) => {
+  return products.filter((product) => {
+    const prices = product.variants
+    ?.map((variant) =>
+      variant.calculated_price?.calculated_amount !== undefined &&
+      variant.calculated_price?.calculated_amount !== null
+        ? Number(variant.calculated_price.calculated_amount)
+        : undefined
+    )
+    .filter((price): price is number => typeof price === "number" && !Number.isNaN(price))
+
+  const minPrice = prices && prices.length ? Math.min(...prices) : 0
+  const maxPrice = prices && prices.length ? Math.max(...prices) : 0
+
+    if (filters.priceMin !== undefined && minPrice < filters.priceMin) {
+      return false
+    }
+
+    if (filters.priceMax !== undefined && maxPrice > filters.priceMax) {
+      return false
+    }
+
+    if (filters.inStock !== undefined) {
+      const hasStock = product.variants?.some(
+        (variant) => variant.inventory_quantity && variant.inventory_quantity > 0
+      )
+
+      if (filters.inStock && !hasStock) {
+        return false
+      }
+    }
+
+    return true
+  })
+}
+
 export const listProductsWithSort = async ({
   page = 0,
   queryParams,
   sortBy = "created_at",
   countryCode,
+  filters,
 }: {
   page?: number
   queryParams?: HttpTypes.FindParams & HttpTypes.StoreProductParams
   sortBy?: SortOptions
   countryCode: string
+  filters?: ProductFilters
 }): Promise<{
   response: { products: HttpTypes.StoreProduct[]; count: number }
   nextPage: number | null
@@ -107,7 +154,7 @@ export const listProductsWithSort = async ({
   const limit = queryParams?.limit || 12
 
   const {
-    response: { products, count },
+    response: { products },
   } = await listProducts({
     pageParam: 0,
     queryParams: {
@@ -117,10 +164,11 @@ export const listProductsWithSort = async ({
     countryCode,
   })
 
-  const sortedProducts = sortProducts(products, sortBy)
+  const filteredProducts = applyFiltersToProducts(products ?? [], filters ?? {})
+  const sortedProducts = sortProducts(filteredProducts, sortBy)
 
   const pageParam = (page - 1) * limit
-
+  const count = filteredProducts.length
   const nextPage = count > pageParam + limit ? pageParam + limit : null
 
   const paginatedProducts = sortedProducts.slice(pageParam, pageParam + limit)

@@ -135,7 +135,7 @@ const Payment = ({
   }, [cart, isOpen, activeSession])
 
   return (
-    <div className="bg-white">
+    <div className="bg-background">
       <div className="flex flex-row items-center justify-between mb-6">
         <Heading
           level="h2"

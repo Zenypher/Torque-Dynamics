@@ -36,13 +36,18 @@ export default function SearchBar() {
         searchClient={searchClient}
         indexName={process.env.NEXT_PUBLIC_MEILISEARCH_INDEX_NAME}
       >
-        <div className="relative w-80">
+        <div
+          className={`flex-1 max-w-xl relative transition-all duration-300 ${
+            isFocused ? "scale-[1.02]" : ""
+          }`}
+        >
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <SearchBox
-            className="w-full [&_input]:w-full [&_input]:outline-none [&_input]:border [&_input]:border-foreground [&_input]:bg-transparent [&_input]:rounded-md [&_input]:px-3 [&_input]:py-2 [&_input]:text-foreground [&_button]:hidden"
+            className="[&_input]:w-full [&_input]:h-10 [&_input]:pl-10 [&_input]:pr-4 [&_input]:rounded-lg [&_input]:border [&_input]:border-input [&_input]:bg-muted/50 [&_input]:text-sm [&_input]:placeholder:text-muted-foreground [&_input]:focus:outline-none [&_input]:focus:ring-2 [&_input]:focus:ring-primary/30 [&_input]:focus:border-primary [&_input]:transition-all [&_button]:hidden"
             onFocus={() => setIsFocused(true)}
             onBlur={() => setTimeout(() => setIsFocused(false), 200)} // Delay to allow clicking on results
+            placeholder="Search parts, brands, or part numbers..."
           />
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-400" />
           {isFocused && (
             <div className="absolute top-full left-0 right-0 bg-background border rounded-md shadow-lg z-50 max-h-96 overflow-y-auto mt-1">
               <Hits

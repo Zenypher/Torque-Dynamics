@@ -6,13 +6,19 @@ import { HttpTypes } from "@medusajs/types"
 import { createContext } from "react"
 
 type StripeWrapperProps = {
-  paymentSession: HttpTypes.StorePaymentSession
+  paymentSession: HttpTypes.StorePaymentSession | undefined
   stripeKey?: string
   stripePromise: Promise<Stripe | null> | null
   children: React.ReactNode
 }
 
-export const StripeContext = createContext(false)
+export const StripeContext = createContext<{
+  isReady: boolean
+  hasElements: boolean
+}>({
+  isReady: false,
+  hasElements: false,
+})
 
 const StripeWrapper: React.FC<StripeWrapperProps> = ({
   paymentSession,
@@ -20,10 +26,6 @@ const StripeWrapper: React.FC<StripeWrapperProps> = ({
   stripePromise,
   children,
 }) => {
-  const options: StripeElementsOptions = {
-    clientSecret: paymentSession!.data?.client_secret as string | undefined,
-  }
-
   if (!stripeKey) {
     throw new Error(
       "Stripe key is missing. Set NEXT_PUBLIC_STRIPE_KEY environment variable."
@@ -36,14 +38,21 @@ const StripeWrapper: React.FC<StripeWrapperProps> = ({
     )
   }
 
+  // If no payment session or no client secret, provide context but no Elements
   if (!paymentSession?.data?.client_secret) {
-    throw new Error(
-      "Stripe client secret is missing. Cannot initialize Stripe."
+    return (
+      <StripeContext.Provider value={{ isReady: true, hasElements: false }}>
+        {children}
+      </StripeContext.Provider>
     )
   }
 
+  const options: StripeElementsOptions = {
+    clientSecret: paymentSession.data.client_secret as string,
+  }
+
   return (
-    <StripeContext.Provider value={true}>
+    <StripeContext.Provider value={{ isReady: true, hasElements: true }}>
       <Elements options={options} stripe={stripePromise}>
         {children}
       </Elements>

@@ -5,9 +5,10 @@ import { placeOrder } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { Button } from "@medusajs/ui"
 import { useElements, useStripe } from "@stripe/react-stripe-js"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import ErrorMessage from "../error-message"
 import { useParams, usePathname, useRouter } from "next/navigation"
+import { StripeContext } from "../payment-wrapper/stripe-wrapper"
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -57,31 +58,23 @@ const StripePaymentButton = ({
   const { countryCode } = useParams()
   const router = useRouter()
   const pathname = usePathname()
+  const stripeContext = useContext(StripeContext)
   const paymentSession = cart.payment_collection?.payment_sessions?.find(
     (session) => session.provider_id === "pp_stripe_stripe"
   )
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
-  }
-
-  const stripe = useStripe()
-  const elements = useElements()
+  // Only use Stripe hooks when Elements is available
+  const stripe = stripeContext.hasElements ? useStripe() : null
+  const elements = stripeContext.hasElements ? useElements() : null
   const card = elements?.getElement("card")
 
   const session = cart.payment_collection?.payment_sessions?.find(
     (s) => s.status === "pending"
   )
 
-  const disabled = !stripe || !elements ? true : false
+  const disabled = !stripeContext.isReady || (stripeContext.hasElements && (!stripe || !elements)) ? true : false
 
   useEffect(() => {
     if (cart.payment_collection?.status === "authorized") {
@@ -90,11 +83,13 @@ const StripePaymentButton = ({
   }, [cart.payment_collection?.status])
 
   useEffect(() => {
-    elements?.getElement("payment")?.on("change", (e) => {
-      if (!e.complete) {
-        router.push(pathname + "?step=payment", { scroll: false })
-      }
-    })
+    if (elements) {
+      elements.getElement("payment")?.on("change", (e) => {
+        if (!e.complete) {
+          router.push(pathname + "?step=payment", { scroll: false })
+        }
+      })
+    }
   }, [elements])
 
   const handlePayment = async () => {

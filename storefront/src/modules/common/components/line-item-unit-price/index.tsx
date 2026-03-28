@@ -39,13 +39,13 @@ const LineItemUnitPrice = ({
             </span>
           </p>
           {style === "default" && (
-            <span className="text-ui-fg-interactive">-{percentage_diff}%</span>
+            <span className="text-primary">-{percentage_diff}%</span>
           )}
         </>
       )}
       <span
         className={clx("text-base-regular", {
-          "text-ui-fg-interactive": hasReducedPrice,
+          "text-ui-primary": hasReducedPrice,
         })}
         data-testid="product-unit-price"
       >

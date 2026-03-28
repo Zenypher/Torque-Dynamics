@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Heading } from "@medusajs/ui"
+import { Button } from "@medusajs/ui"
 
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
@@ -28,19 +28,40 @@ const Summary = ({ cart }: SummaryProps) => {
   const step = getCheckoutStep(cart)
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <Heading level="h2" className="text-[2rem] leading-[2.75rem]">
-        Summary
-      </Heading>
-      <DiscountCode cart={cart} />
-      <Divider />
-      <CartTotals totals={cart} />
-      <LocalizedClientLink
-        href={"/checkout?step=" + step}
-        data-testid="checkout-button"
-      >
-        <Button className="w-full h-10">Go to checkout</Button>
-      </LocalizedClientLink>
+    <div className="lg:col-span-1">
+      <div className="rounded-xl border border-border bg-card p-6 space-y-5 sticky top-32">
+        <h2 className="font-display font-bold text-lg">Order Summary</h2>
+
+        <div>
+          <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            Promo Code
+          </label>
+          <div className="flex gap-2 mt-1.5">
+            <div className="relative flex-1">
+              <DiscountCode cart={cart} />
+            </div>
+          </div>
+        </div>
+
+        <Divider />
+
+        <CartTotals totals={cart} />
+
+        <LocalizedClientLink
+          href={"/checkout?step=" + step}
+          data-testid="checkout-button"
+        >
+          <Button className="w-full ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide h-12 rounded-md px-8 text-base">
+            Proceed to Checkout
+          </Button>
+        </LocalizedClientLink>
+
+        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+          <span>🔒 Secure Checkout</span>
+          <span>•</span>
+          <span>30-Day Returns</span>
+        </div>
+      </div>
     </div>
   )
 }

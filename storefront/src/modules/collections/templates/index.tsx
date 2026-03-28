@@ -11,18 +11,29 @@ export default function CollectionTemplate({
   collection,
   page,
   countryCode,
+  priceMin,
+  priceMax,
+  inStock,
 }: {
   sortBy?: SortOptions
   collection: HttpTypes.StoreCollection
   page?: string
   countryCode: string
+  priceMin?: string
+  priceMax?: string
+  inStock?: "true" | "false"
 }) {
   const pageNumber = page ? parseInt(page) : 1
   const sort = sortBy || "created_at"
 
   return (
     <div className="flex flex-col small:flex-row small:items-start py-6 content-container">
-      <RefinementList sortBy={sort} />
+      <RefinementList
+        sortBy={sort}
+        priceMin={priceMin}
+        priceMax={priceMax}
+        inStock={inStock}
+      />
       <div className="w-full">
         <div className="mb-8 text-2xl-semi">
           <h1>{collection.title}</h1>
@@ -39,6 +50,9 @@ export default function CollectionTemplate({
             page={pageNumber}
             collectionId={collection.id}
             countryCode={countryCode}
+            priceMin={priceMin}
+            priceMax={priceMax}
+            inStock={inStock}
           />
         </Suspense>
       </div>

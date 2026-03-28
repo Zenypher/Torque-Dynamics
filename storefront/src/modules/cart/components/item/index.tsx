@@ -45,7 +45,7 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
   const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
 
   return (
-    <Table.Row className="w-full" data-testid="product-row">
+    <Table.Row className="w-full bg-transparent" data-testid="product-row">
       <Table.Cell className="!pl-0 p-4 w-24">
         <LocalizedClientLink
           href={`/products/${item.product_handle}`}
@@ -88,29 +88,19 @@ const Item = ({ item, type = "full", currencyCode }: ItemProps) => {
                   length: Math.min(maxQuantity, 10),
                 },
                 (_, i) => (
-                  <option value={i + 1} key={i}>
+                  <option value={i + 1} key={i} className="bg-background">
                     {i + 1}
                   </option>
                 )
               )}
 
-              <option value={1} key={1}>
+              <option value={1} key={1} className="bg-background">
                 1
               </option>
             </CartItemSelect>
             {updating && <Spinner />}
           </div>
           <ErrorMessage error={error} data-testid="product-error-message" />
-        </Table.Cell>
-      )}
-
-      {type === "full" && (
-        <Table.Cell className="hidden small:table-cell">
-          <LineItemUnitPrice
-            item={item}
-            style="tight"
-            currencyCode={currencyCode}
-          />
         </Table.Cell>
       )}
 

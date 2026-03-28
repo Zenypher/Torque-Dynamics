@@ -7,7 +7,14 @@ import {
   ListboxOptions,
   Transition,
 } from "@headlessui/react"
-import { Fragment, useEffect, useMemo, useState, useTransition } from "react"
+import {
+  Fragment,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react"
 import { useRouter } from "next/navigation"
 import ReactCountryFlag from "react-country-flag"
 
@@ -74,7 +81,12 @@ const LanguageSelect = ({
   currentLocale,
 }: LanguageSelectProps) => {
   const [current, setCurrent] = useState<LanguageOption | undefined>(undefined)
+  const [dropdownPosition, setDropdownPosition] = useState<"top" | "bottom">(
+    "bottom"
+  )
   const [isPending, startTransition] = useTransition()
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const router = useRouter()
 
   const { state, close } = toggleState
@@ -104,6 +116,27 @@ const LanguageSelect = ({
     }
   }, [options, currentLocale])
 
+  // Calculate dropdown position based on available space
+  useEffect(() => {
+    if (state && buttonRef.current) {
+      const buttonRect = buttonRef.current.getBoundingClientRect()
+      const viewportHeight = window.innerHeight
+      const dropdownHeight = 442 // max-h-[442px] from the className
+
+      const spaceBelow = viewportHeight - buttonRect.bottom
+      const spaceAbove = buttonRect.top
+
+      if (spaceBelow >= dropdownHeight) {
+        setDropdownPosition("bottom")
+      } else if (spaceAbove >= dropdownHeight) {
+        setDropdownPosition("top")
+      } else {
+        // If neither has enough space, prefer bottom but adjust height
+        setDropdownPosition("bottom")
+      }
+    }
+  }, [state])
+
   const handleChange = (option: LanguageOption) => {
     startTransition(async () => {
       await updateLocale(option.code)
@@ -126,7 +159,7 @@ const LanguageSelect = ({
         }
         disabled={isPending}
       >
-        <ListboxButton className="py-1 w-full">
+        <ListboxButton ref={buttonRef} className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
             <span>Language:</span>
             {current && (
@@ -147,7 +180,7 @@ const LanguageSelect = ({
             )}
           </div>
         </ListboxButton>
-        <div className="flex relative w-full min-w-[320px]">
+        <div ref={dropdownRef} className="flex relative w-full min-w-[320px]">
           <Transition
             show={state}
             as={Fragment}
@@ -156,7 +189,11 @@ const LanguageSelect = ({
             leaveTo="opacity-0"
           >
             <ListboxOptions
-              className="absolute -bottom-[calc(100%-36px)] left-0 xsmall:left-auto xsmall:right-0 max-h-[442px] overflow-y-scroll z-[900] bg-white drop-shadow-md text-small-regular uppercase text-black no-scrollbar rounded-rounded w-full"
+              className={`absolute z-[900] bg-white drop-shadow-md text-small-regular uppercase text-black no-scrollbar rounded-rounded w-full ${
+                dropdownPosition === "bottom"
+                  ? "top-[calc(100%-36px)]"
+                  : "-bottom-[calc(100%-36px)]"
+              } left-0 xsmall:left-auto xsmall:right-0 max-h-[442px] overflow-y-scroll`}
               static
             >
               {options.map((o) => (

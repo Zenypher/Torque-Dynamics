@@ -20,6 +20,9 @@ export default async function PaginatedProducts({
   collectionId,
   categoryId,
   productsIds,
+  priceMin,
+  priceMax,
+  inStock,
   countryCode,
 }: {
   sortBy?: SortOptions
@@ -27,6 +30,9 @@ export default async function PaginatedProducts({
   collectionId?: string
   categoryId?: string
   productsIds?: string[]
+  priceMin?: string
+  priceMax?: string
+  inStock?: "true" | "false"
   countryCode: string
 }) {
   const queryParams: PaginatedProductsParams = {
@@ -62,6 +68,12 @@ export default async function PaginatedProducts({
     queryParams,
     sortBy,
     countryCode,
+    filters: {
+      priceMin: priceMin ? Number(priceMin) : undefined,
+      priceMax: priceMax ? Number(priceMax) : undefined,
+      inStock:
+        inStock === "true" ? true : inStock === "false" ? false : undefined,
+    },
   })
 
   const totalPages = Math.ceil(count / PRODUCT_LIMIT)

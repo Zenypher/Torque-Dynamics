@@ -17,6 +17,9 @@ type MobileActionsProps = {
   options: Record<string, string | undefined>
   updateOptions: (title: string, value: string) => void
   inStock?: boolean
+  quantity: number
+  maxQuantity: number
+  setQuantity: (quantity: number) => void
   handleAddToCart: () => void
   isAdding?: boolean
   show: boolean
@@ -29,6 +32,9 @@ const MobileActions: React.FC<MobileActionsProps> = ({
   options,
   updateOptions,
   inStock,
+  quantity,
+  maxQuantity,
+  setQuantity,
   handleAddToCart,
   isAdding,
   show,
@@ -70,7 +76,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
           leaveTo="opacity-0"
         >
           <div
-            className="bg-white flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t border-gray-200"
+            className="bg-background flex flex-col gap-y-3 justify-center items-center text-large-regular p-4 h-full w-full border-t "
             data-testid="mobile-actions"
           >
             <div className="flex items-center gap-x-2">
@@ -98,27 +104,80 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 <div></div>
               )}
             </div>
-            <div className={clx("grid grid-cols-2 w-full gap-x-4", {
-              "!grid-cols-1": isSimple
-            })}>
-              {!isSimple && <Button
-                onClick={open}
-                variant="secondary"
-                className="w-full"
-                data-testid="mobile-actions-button"
+            <div className="flex items-center gap-2 w-full">
+              <button
+                type="button"
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={isAdding || quantity <= 1}
+                className="h-10 w-10 rounded border border-border bg-background"
+                aria-label="Decrease quantity"
               >
-                <div className="flex items-center justify-between w-full">
-                  <span>
-                    {variant
-                      ? Object.values(options).join(" / ")
-                      : "Select Options"}
-                  </span>
-                  <ChevronDown />
-                </div>
-              </Button>}
+                −
+              </button>
+              <input
+                type="number"
+                min={1}
+                max={maxQuantity}
+                value={quantity}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  if (Number.isNaN(value)) {
+                    setQuantity(1)
+                  } else {
+                    setQuantity(Math.max(1, Math.min(maxQuantity, value)))
+                  }
+                }}
+                className="w-16 text-center rounded border border-border bg-background h-10"
+                aria-label="Quantity"
+              />
+              <button
+                type="button"
+                onClick={() => setQuantity(Math.min(maxQuantity, quantity + 1))}
+                disabled={isAdding || quantity >= maxQuantity}
+                className="h-10 w-10 rounded border border-border bg-background"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+            {variant?.manage_inventory && (
+              <p className="text-xs text-muted-foreground w-full">
+                {maxQuantity > 0
+                  ? `Only ${maxQuantity} left in stock`
+                  : "Out of stock"}
+              </p>
+            )}
+            <div
+              className={clx("grid grid-cols-2 w-full gap-x-4", {
+                "!grid-cols-1": isSimple,
+              })}
+            >
+              {!isSimple && (
+                <Button
+                  onClick={open}
+                  variant="secondary"
+                  className="w-full"
+                  data-testid="mobile-actions-button"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <span>
+                      {variant
+                        ? Object.values(options).join(" / ")
+                        : "Select Options"}
+                    </span>
+                    <ChevronDown />
+                  </div>
+                </Button>
+              )}
               <Button
                 onClick={handleAddToCart}
-                disabled={!inStock || !variant}
+                disabled={
+                  !inStock ||
+                  !variant ||
+                  isAdding ||
+                  quantity < 1 ||
+                  quantity > maxQuantity
+                }
                 className="w-full"
                 isLoading={isAdding}
                 data-testid="mobile-cart-button"
@@ -165,15 +224,15 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   <div className="w-full flex justify-end pr-6">
                     <button
                       onClick={close}
-                      className="bg-white w-12 h-12 rounded-full text-ui-fg-base flex justify-center items-center"
+                      className="bg-background w-12 h-12 rounded-full text-ui-fg-base flex justify-center items-center"
                       data-testid="close-modal-button"
                     >
                       <X />
                     </button>
                   </div>
-                  <div className="bg-white px-6 py-12">
+                  <div className="bg-background px-6 py-12">
                     {(product.variants?.length ?? 0) > 1 && (
-                      <div className="flex flex-col gap-y-6">
+                      <div className="flex flex-col gap-y-6 text-foreground">
                         {(product.options || []).map((option) => {
                           return (
                             <div key={option.id}>
