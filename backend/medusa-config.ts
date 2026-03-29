@@ -63,6 +63,7 @@ module.exports = defineConfig({
     },
   ],
   projectConfig: {
+    redisUrl: process.env.REDIS_URL,
     databaseUrl: process.env.DATABASE_URL,
     databaseDriverOptions:
       process.env.NODE_ENV === "production"
