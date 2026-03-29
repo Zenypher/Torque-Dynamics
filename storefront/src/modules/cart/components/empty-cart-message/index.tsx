@@ -13,7 +13,7 @@ const EmptyCartMessage = () => {
       <div className="text-center">
         <p className="text-lg font-semibold">Your cart is empty</p>
         <p className="text-sm text-muted-foreground mt-1">
-          Looks like you haven't added any parts yet.
+          Looks like you haven&apos;t added any parts yet.
         </p>
       </div>
       <LocalizedClientLink href="/">

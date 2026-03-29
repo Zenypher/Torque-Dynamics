@@ -18,7 +18,9 @@ const PICKUP_OPTION_OFF = "__PICKUP_OFF"
 
 type ShippingProps = {
   cart: HttpTypes.StoreCart
-  availableShippingMethods: HttpTypes.StoreCartShippingOption[] | null
+  availableShippingMethods:
+    | HttpTypes.StoreCartShippingOptionWithServiceZone[]
+    | null
 }
 
 function formatAddress(address: HttpTypes.StoreCartAddress) {
@@ -64,19 +66,25 @@ const Shipping: React.FC<ShippingProps> = ({
     cart.shipping_methods?.at(-1)?.shipping_option_id || null
   )
 
+  const canContinue = Boolean(shippingMethodId || cart.shipping_methods?.length)
+
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
   const isOpen = searchParams.get("step") === "delivery"
 
+  const isPickupOption = (
+    option: HttpTypes.StoreCartShippingOptionWithServiceZone
+  ) =>
+    option.service_zone?.fulfillment_set?.type === "pickup" ||
+    option.type?.code?.toLowerCase?.() === "pickup"
+
   const _shippingMethods = availableShippingMethods?.filter(
-    (sm) => sm.service_zone?.fulfillment_set?.type !== "pickup"
+    (sm) => !isPickupOption(sm)
   )
 
-  const _pickupMethods = availableShippingMethods?.filter(
-    (sm) => sm.service_zone?.fulfillment_set?.type === "pickup"
-  )
+  const _pickupMethods = availableShippingMethods?.filter(isPickupOption)
 
   const hasPickupOptions = !!_pickupMethods?.length
 
@@ -104,7 +112,13 @@ const Shipping: React.FC<ShippingProps> = ({
     if (_pickupMethods?.find((m) => m.id === shippingMethodId)) {
       setShowPickupOptions(PICKUP_OPTION_ON)
     }
-  }, [availableShippingMethods])
+  }, [
+    availableShippingMethods,
+    _pickupMethods,
+    _shippingMethods,
+    cart.id,
+    shippingMethodId,
+  ])
 
   const handleEdit = () => {
     router.push(pathname + "?step=delivery", { scroll: false })
@@ -341,10 +355,9 @@ const Shipping: React.FC<ShippingProps> = ({
                                 {option.name}
                               </span>
                               <span className="text-base-regular text-ui-fg-muted">
-                                {formatAddress(
-                                  option.service_zone?.fulfillment_set?.location
-                                    ?.address
-                                )}
+                                {option.type?.label ||
+                                  option.type?.code ||
+                                  "Pickup location"}
                               </span>
                             </div>
                           </div>
@@ -373,7 +386,7 @@ const Shipping: React.FC<ShippingProps> = ({
               className="mt"
               onClick={handleSubmit}
               isLoading={isLoading}
-              disabled={!cart.shipping_methods?.[0]}
+              disabled={!canContinue}
               data-testid="submit-delivery-option-button"
             >
               Continue to payment

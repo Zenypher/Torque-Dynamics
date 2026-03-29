@@ -29,8 +29,10 @@ const Payment = ({
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>("")
 
   const stripeReady = useContext(StripeContext)
-  const stripe = stripeReady ? useStripe() : null
-  const elements = stripeReady ? useElements() : null
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const stripe = stripeReady.hasElements ? useStripe() : null
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const elements = stripeReady.hasElements ? useElements() : null
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -116,7 +118,7 @@ const Payment = ({
     }
   }
 
-  const initStripe = async () => {
+  const initStripe = useCallback(async () => {
     try {
       await initiatePaymentSession(cart, {
         // TODO: change the provider ID if using a different ID in medusa-config.ts
@@ -126,13 +128,13 @@ const Payment = ({
       console.error("Failed to initialize Stripe session:", err)
       setError("Failed to initialize payment. Please try again.")
     }
-  }
+  }, [cart])
 
   useEffect(() => {
     if (!activeSession && isOpen) {
       initStripe()
     }
-  }, [cart, isOpen, activeSession])
+  }, [isOpen, activeSession, initStripe])
 
   return (
     <div className="bg-background">
@@ -166,12 +168,9 @@ const Payment = ({
         <div className={isOpen ? "block" : "hidden"}>
           {!paidByGiftcard &&
             availablePaymentMethods?.length &&
-            stripeReady && (
+            stripeReady.hasElements && (
               <div className="mt-5 transition-all duration-150 ease-in-out">
-                <PaymentElement
-                  onChange={handlePaymentElementChange}
-                  options={{ layout: "accordion" }}
-                />
+                <PaymentElement onChange={handlePaymentElementChange} />
               </div>
             )}
 

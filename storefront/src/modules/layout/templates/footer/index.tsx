@@ -27,7 +27,7 @@ export default async function Footer() {
             </div>
             <p className="text-sm leading-relaxed">
               Premium auto parts for every make and model. Quality you can
-              trust, prices you'll love.
+              trust, prices you&apos;ll love.
             </p>
           </div>
 

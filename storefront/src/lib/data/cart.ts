@@ -450,10 +450,10 @@ export async function placeOrder(cartId?: string) {
       revalidateTag(orderCacheTag)
 
       removeCartId()
-      redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
+      return { type: "order", order: cartRes.order, countryCode }
     }
 
-    return cartRes.cart
+    return { type: "cart", cart: cartRes.cart }
   } catch (error) {
     medusaError(error)
   }

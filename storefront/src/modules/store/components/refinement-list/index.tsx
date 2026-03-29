@@ -126,7 +126,7 @@ const RefinementList = ({
           <button
             type="button"
             onClick={clearFilters}
-            className="text-xs font-medium text-primary hover:text-primary-foreground transition-colors flex gap-2"
+            className="text-xs font-medium text-primary hover:text-foreground transition-colors flex gap-2"
           >
             <XMark />
             Clear filters

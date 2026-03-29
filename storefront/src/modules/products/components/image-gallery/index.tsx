@@ -56,7 +56,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                     fill
                     sizes="(max-width: 576px) 280px, (max-width: 768px) 360px, (max-width: 992px) 480px, 800px"
                     style={{
-                      objectFit: "cover",
+                      objectFit: "contain",
                     }}
                   />
                 )}
@@ -64,30 +64,28 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
             ))}
           </div>
 
-          {/* Navigation Buttons */}
           {images.length > 1 && (
             <>
               <IconButton
                 variant="transparent"
-                size="small"
-                className="absolute left-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-foreground shadow-md"
+                size="large"
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-foreground shadow-md text-white hover:text-neutral-900"
                 onClick={goToPrevious}
               >
-                <ChevronLeft className="w-8 h-8" />
+                <ChevronLeft />
               </IconButton>
               <IconButton
                 variant="transparent"
-                size="small"
-                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-foreground shadow-md"
+                size="large"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary hover:bg-primary-foreground shadow-md text-white hover:text-neutral-900"
                 onClick={goToNext}
               >
-                <ChevronRight className="w-8 h-8" />
+                <ChevronRight />
               </IconButton>
             </>
           )}
         </div>
 
-        {/* Thumbnail Strip */}
         {images.length > 1 && (
           <div className="flex gap-2 overflow-x-auto pb-2">
             {images.map((image, index) => (
@@ -96,7 +94,7 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
                 onClick={() => goToImage(index)}
                 className={`flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-colors ${
                   index === currentIndex
-                    ? "border-ui-border-interactive"
+                    ? "border-primary"
                     : "border-transparent hover:border-ui-border-base"
                 }`}
               >
@@ -114,16 +112,15 @@ const ImageGallery = ({ images }: ImageGalleryProps) => {
           </div>
         )}
 
-        {/* Dot Indicators */}
         {images.length > 1 && (
           <div className="flex justify-center gap-2 mt-2">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToImage(index)}
-                className={`w-2 h-2 rounded-full transition-colors ${
+                className={`w-3 h-3 rounded-full transition-colors ${
                   index === currentIndex
-                    ? "bg-ui-border-interactive"
+                    ? "bg-primary"
                     : "bg-ui-border-base hover:bg-ui-border-strong"
                 }`}
               />

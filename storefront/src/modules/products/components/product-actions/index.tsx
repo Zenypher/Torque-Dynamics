@@ -92,7 +92,7 @@ export default function ProductActions({
     }
 
     router.replace(pathname + "?" + params.toString())
-  }, [selectedVariant, isValidVariant])
+  }, [selectedVariant, isValidVariant, pathname, router, searchParams])
 
   const maxQuantity = useMemo(() => {
     if (!selectedVariant) {
@@ -201,89 +201,91 @@ export default function ProductActions({
 
         <ProductPrice product={product} variant={selectedVariant} />
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center border border-border rounded-lg">
-            <button
-              type="button"
-              onClick={() => setQuantity((curr) => Math.max(1, curr - 1))}
-              disabled={isAdding || quantity <= 1}
-              className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Decrease quantity"
-            >
-              −
-            </button>
+        <div className="grid grid-cols-1 gap-y-2">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
+            <div className="flex flex-1 justify-between items-center border border-border rounded-lg">
+              <button
+                type="button"
+                onClick={() => setQuantity((curr) => Math.max(1, curr - 1))}
+                disabled={isAdding || quantity <= 1}
+                className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
 
-            <input
-              type="number"
-              min={1}
-              max={maxQuantity}
-              value={quantity}
-              onChange={(e) => {
-                const value = Number(e.target.value)
-                if (Number.isNaN(value)) {
-                  setQuantity(1)
-                } else {
-                  setQuantity(Math.max(1, Math.min(maxQuantity, value)))
+              <input
+                type="number"
+                min={1}
+                max={maxQuantity}
+                value={quantity}
+                onChange={(e) => {
+                  const value = Number(e.target.value)
+                  if (Number.isNaN(value)) {
+                    setQuantity(1)
+                  } else {
+                    setQuantity(Math.max(1, Math.min(maxQuantity, value)))
+                  }
+                }}
+                className="w-10 h-10 text-center text-sm font-medium bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                aria-label="Quantity"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setQuantity((curr) => Math.min(maxQuantity, curr + 1))
                 }
-              }}
-              className="w-10 h-10 text-center text-sm font-medium bg-transparent"
-              aria-label="Quantity"
-            />
-
-            <button
-              type="button"
-              onClick={() =>
-                setQuantity((curr) => Math.min(maxQuantity, curr + 1))
-              }
+                disabled={
+                  isAdding ||
+                  (selectedVariant?.manage_inventory
+                    ? quantity >= maxQuantity
+                    : false)
+                }
+                className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+            <Button
+              onClick={handleAddToCart}
               disabled={
+                !inStock ||
+                !selectedVariant ||
+                !!disabled ||
                 isAdding ||
-                (selectedVariant?.manage_inventory
-                  ? quantity >= maxQuantity
-                  : false)
+                !isValidVariant ||
+                quantity < 1 ||
+                quantity > maxQuantity
               }
-              className="px-3 py-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Increase quantity"
+              variant="primary"
+              className="w-full ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide h-12 rounded-md px-8 text-base gap-2 disabled:bg-ui-bg-disabled"
+              isLoading={isAdding}
+              data-testid="add-product-button"
             >
-              +
-            </button>
+              {!selectedVariant && !options ? (
+                "Select variant"
+              ) : !inStock || !isValidVariant ? (
+                "Out of stock"
+              ) : (
+                <>
+                  <ShoppingCart className="w-4 h-4" />
+                  Add to Cart
+                </>
+              )}
+            </Button>
           </div>
+
+          {selectedVariant?.manage_inventory && (
+            <p className="text-xs text-muted-foreground">
+              {maxQuantity > 0
+                ? `Only ${maxQuantity} left in stock`
+                : "Out of stock"}
+            </p>
+          )}
         </div>
 
-        {selectedVariant?.manage_inventory && (
-          <p className="text-xs text-muted-foreground">
-            {maxQuantity > 0
-              ? `Only ${maxQuantity} left in stock`
-              : "Out of stock"}
-          </p>
-        )}
-
-        <Button
-          onClick={handleAddToCart}
-          disabled={
-            !inStock ||
-            !selectedVariant ||
-            !!disabled ||
-            isAdding ||
-            !isValidVariant ||
-            quantity < 1 ||
-            quantity > maxQuantity
-          }
-          variant="primary"
-          className="w-full ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide h-12 rounded-md px-8 text-base"
-          isLoading={isAdding}
-          data-testid="add-product-button"
-        >
-          {!selectedVariant && !options ? (
-            "Select variant"
-          ) : !inStock || !isValidVariant ? (
-            "Out of stock"
-          ) : (
-            <>
-              <ShoppingCart className="w-4 h-4" />
-              Add to Cart
-            </>
-          )}
-        </Button>
         <MobileActions
           product={product}
           variant={selectedVariant}

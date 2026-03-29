@@ -1,13 +1,15 @@
 import { Button } from "@headlessui/react"
+import Image from "next/image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 const Hero = () => {
   return (
     <section className="relative overflow-hidden bg-surface-dark min-h-[520px] flex items-center">
       <div className="absolute inset-0">
-        <img
+        <Image
           src="/hero-bg.png"
           alt=""
+          fill
           className="w-full h-full object-cover opacity-40"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-surface-dark via-surface-dark/80 to-transparent" />

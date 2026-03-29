@@ -2,6 +2,7 @@ import { clx } from "@medusajs/ui"
 
 import { getProductPrice } from "@lib/util/get-product-price"
 import { HttpTypes } from "@medusajs/types"
+import { Badge } from "@/modules/common/components/badge"
 
 export default function ProductPrice({
   product,
@@ -22,10 +23,10 @@ export default function ProductPrice({
   }
 
   return (
-    <div className="flex flex-col text-ui-fg-base">
+    <div className="flex items-baseline gap-2 text-ui-fg-base">
       <span
-        className={clx("text-xl-semi", {
-          "text-primary": selectedPrice.price_type === "sale",
+        className={clx("text-3xl font-bold", {
+          "text-foreground": selectedPrice.price_type === "sale",
         })}
       >
         {!variant && "From "}
@@ -38,19 +39,16 @@ export default function ProductPrice({
       </span>
       {selectedPrice.price_type === "sale" && (
         <>
-          <p>
-            <span className="text-ui-fg-subtle">Original: </span>
-            <span
-              className="line-through"
-              data-testid="original-product-price"
-              data-value={selectedPrice.original_price_number}
-            >
-              {selectedPrice.original_price}
-            </span>
-          </p>
-          <span className="text-primary">
-            -{selectedPrice.percentage_diff}%
+          <span
+            className="text-lg text-muted-foreground line-through"
+            data-testid="original-product-price"
+            data-value={selectedPrice.original_price_number}
+          >
+            {selectedPrice.original_price}
           </span>
+          <Badge variant="secondary" className="text-primary fond-bold w-fit">
+            Save -{selectedPrice.percentage_diff}%
+          </Badge>
         </>
       )}
     </div>

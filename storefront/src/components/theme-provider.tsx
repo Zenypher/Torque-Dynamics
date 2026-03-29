@@ -28,13 +28,20 @@ export function ThemeProvider({
   storageKey = "theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () =>
-      ((typeof window !== "undefined" &&
-        localStorage.getItem(storageKey)) as Theme) || defaultTheme
-  )
+  const [theme, setTheme] = useState<Theme>(defaultTheme)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+    const stored = localStorage.getItem(storageKey) as Theme
+    if (stored && stored !== theme) {
+      setTheme(stored)
+    }
+  }, [storageKey])
+
+  useEffect(() => {
+    if (!mounted) return
+
     const root = window.document.documentElement
 
     // Remove any existing theme classes
@@ -45,7 +52,7 @@ export function ThemeProvider({
 
     // Store the user's preference
     localStorage.setItem(storageKey, theme)
-  }, [theme, storageKey])
+  }, [theme, storageKey, mounted])
 
   const value = {
     theme,

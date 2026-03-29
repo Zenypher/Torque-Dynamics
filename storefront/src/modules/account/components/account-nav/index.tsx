@@ -2,7 +2,7 @@
 
 import { clx } from "@medusajs/ui"
 import { ArrowRightOnRectangle } from "@medusajs/icons"
-import { useParams, usePathname } from "next/navigation"
+import { useParams, usePathname, useRouter } from "next/navigation"
 
 import ChevronDown from "@modules/common/icons/chevron-down"
 import User from "@modules/common/icons/user"
@@ -19,9 +19,13 @@ const AccountNav = ({
 }) => {
   const route = usePathname()
   const { countryCode } = useParams() as { countryCode: string }
+  const router = useRouter()
 
   const handleLogout = async () => {
-    await signout(countryCode)
+    const result = await signout(countryCode)
+    if (result.success) {
+      router.push(`/${countryCode}/account`)
+    }
   }
 
   return (

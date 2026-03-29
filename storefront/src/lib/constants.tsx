@@ -1,5 +1,5 @@
 import React from "react"
-import { CreditCard } from "@medusajs/icons"
+import { CreditCard, Stripe } from "@medusajs/icons"
 
 import Ideal from "@modules/common/icons/ideal"
 import Bancontact from "@modules/common/icons/bancontact"
@@ -13,8 +13,8 @@ export const paymentInfoMap: Record<
   card: { title: "Credit card", icon: <CreditCard /> },
   paypal: { title: "PayPal", icon: <PayPal /> },
   pp_stripe_stripe: {
-    title: "Credit card",
-    icon: <CreditCard />,
+    title: "Stripe",
+    icon: <Stripe />,
   },
   "pp_medusa-payments_default": {
     title: "Credit card",

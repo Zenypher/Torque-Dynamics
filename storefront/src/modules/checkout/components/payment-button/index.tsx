@@ -39,7 +39,11 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
       )
     case isManual(paymentSession?.provider_id):
       return (
-        <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
+        <ManualTestPaymentButton
+          cart={cart}
+          notReady={notReady}
+          data-testid={dataTestId}
+        />
       )
     default:
       return <Button disabled>Select a payment method</Button>
@@ -60,13 +64,15 @@ const StripePaymentButton = ({
   const pathname = usePathname()
   const stripeContext = useContext(StripeContext)
   const paymentSession = cart.payment_collection?.payment_sessions?.find(
-    (session) => session.provider_id === "pp_stripe_stripe"
+    (session) => session.provider_id === "pp_stripe"
   )
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   // Only use Stripe hooks when Elements is available
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const stripe = stripeContext.hasElements ? useStripe() : null
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const elements = stripeContext.hasElements ? useElements() : null
   const card = elements?.getElement("card")
 
@@ -74,7 +80,11 @@ const StripePaymentButton = ({
     (s) => s.status === "pending"
   )
 
-  const disabled = !stripeContext.isReady || (stripeContext.hasElements && (!stripe || !elements)) ? true : false
+  const disabled =
+    !stripeContext.isReady ||
+    (stripeContext.hasElements && (!stripe || !elements))
+      ? true
+      : false
 
   useEffect(() => {
     if (cart.payment_collection?.status === "authorized") {
@@ -84,13 +94,35 @@ const StripePaymentButton = ({
 
   useEffect(() => {
     if (elements) {
-      elements.getElement("payment")?.on("change", (e) => {
+      const paymentElement = elements.getElement("payment")
+      paymentElement?.on("change", (e) => {
         if (!e.complete) {
           router.push(pathname + "?step=payment", { scroll: false })
         }
       })
+      paymentElement?.on("loaderror", (e) => {
+        console.error("PaymentElement load error", e)
+        setErrorMessage(
+          "Failed to load payment form. Please refresh and try again."
+        )
+      })
     }
-  }, [elements])
+  }, [elements, pathname, router])
+
+  const onPaymentCompleted = async () => {
+    try {
+      const result = await placeOrder(cart.id)
+      if (result?.type === "order" && result.order) {
+        router.push(`/${result.countryCode}/order/${result.order.id}/confirmed`)
+      } else {
+        setErrorMessage("Failed to place order")
+      }
+    } catch (error) {
+      setErrorMessage("Failed to place order")
+    } finally {
+      setSubmitting(false)
+    }
+  }
 
   const handlePayment = async () => {
     if (!stripe || !elements || !cart) {
@@ -179,18 +211,30 @@ const StripePaymentButton = ({
   )
 }
 
-const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
+const ManualTestPaymentButton = ({
+  cart,
+  notReady,
+}: {
+  cart: HttpTypes.StoreCart
+  notReady: boolean
+}) => {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const router = useRouter()
 
   const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
+    try {
+      const result = await placeOrder(cart.id)
+      if (result?.type === "order" && result.order) {
+        router.push(`/${result.countryCode}/order/${result.order.id}/confirmed`)
+      } else {
+        setErrorMessage("Failed to place order")
+      }
+    } catch (error) {
+      setErrorMessage("Failed to place order")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const handlePayment = () => {

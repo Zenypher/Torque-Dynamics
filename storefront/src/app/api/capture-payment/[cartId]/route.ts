@@ -35,9 +35,15 @@ export async function GET(req: NextRequest, { params }: { params: Params }) {
     )
   }
 
-  const order = await placeOrder(cartId)
+  const orderResult = await placeOrder(cartId)
 
-  return NextResponse.redirect(
-    `${origin}/${countryCode}/order/${order.id}/confirmed`
-  )
+  if (orderResult?.type === "order" && orderResult.order) {
+    return NextResponse.redirect(
+      `${origin}/${countryCode}/order/${orderResult.order.id}/confirmed`
+    )
+  } else {
+    return NextResponse.redirect(
+      `${origin}/${countryCode}/cart?step=review&error=payment_failed`
+    )
+  }
 }

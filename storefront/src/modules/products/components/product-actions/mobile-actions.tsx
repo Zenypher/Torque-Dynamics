@@ -93,8 +93,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   )}
                   <span
                     className={clx({
-                      "text-ui-fg-interactive":
-                        selectedPrice.price_type === "sale",
+                      "text-primary": selectedPrice.price_type === "sale",
                     })}
                   >
                     {selectedPrice.calculated_price}
@@ -104,7 +103,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                 <div></div>
               )}
             </div>
-            <div className="flex items-center gap-2 w-full">
+            <div className="flex justify-center items-center gap-2 w-full">
               <button
                 type="button"
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -141,7 +140,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
               </button>
             </div>
             {variant?.manage_inventory && (
-              <p className="text-xs text-muted-foreground w-full">
+              <p className="text-xs text-muted-foreground w-full text-center">
                 {maxQuantity > 0
                   ? `Only ${maxQuantity} left in stock`
                   : "Out of stock"}
@@ -178,7 +177,7 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                   quantity < 1 ||
                   quantity > maxQuantity
                 }
-                className="w-full"
+                className="w-full ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide h-12 rounded-md px-8 text-base gap-2"
                 isLoading={isAdding}
                 data-testid="mobile-cart-button"
               >
