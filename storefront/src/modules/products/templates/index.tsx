@@ -54,7 +54,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
       <section className="container pb-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Image Gallery */}
-          <div className="relative aspect-square rounded-xl bg-muted border border-border">
+          <div className="relative rounded-xl bg-muted border border-border">
             <ImageGallery images={images} />
           </div>
 

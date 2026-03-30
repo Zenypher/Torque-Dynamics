@@ -39,12 +39,12 @@ const Hero = () => {
             <LocalizedClientLink href="/store">
               <Button
                 className="ferrari-gradient text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 font-semibold tracking-wide
-          h-14 rounded-lg px-10 text-lg"
+          h-14 rounded-lg px-10 text-lg transition-all duration-200"
               >
                 Shop All Parts
               </Button>
             </LocalizedClientLink>
-            <Button className="h-14 rounded-lg px-10 text-lg border text-surface-dark-text bg-surface-dark-text/10 hover:bg-surface-dark-text/20 hover:text-surface-dark-text">
+            <Button className="h-14 rounded-lg px-10 text-lg border text-surface-dark-text bg-surface-dark-text/10 hover:bg-surface-dark-text/20 hover:text-surface-dark-text transition-all duration-200">
               Find My Fit
             </Button>
           </div>

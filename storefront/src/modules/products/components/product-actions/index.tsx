@@ -202,7 +202,7 @@ export default function ProductActions({
         <ProductPrice product={product} variant={selectedVariant} />
 
         <div className="grid grid-cols-1 gap-y-2">
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
+          <div className="flex flex-wrap lg:flex-nowrap items-center gap-3">
             <div className="flex flex-1 justify-between items-center border border-border rounded-lg">
               <button
                 type="button"
