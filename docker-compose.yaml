@@ -1,0 +1,26 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+      - "7001:7001"
+    env_file: ./backend/.env
+    # Explicitly overriding these to ensure they hit your cloud services
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+
+  storefront:
+    build:
+      context: ./storefront
+      dockerfile: Dockerfile
+    ports:
+      - "8000:3000"
+    env_file: ./storefront/.env
+    environment:
+      - NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
+    depends_on:
+      - backend
+  
