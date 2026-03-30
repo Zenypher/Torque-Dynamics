@@ -2,17 +2,18 @@ import {
   createWorkflow,
   transform,
   WorkflowResponse,
-} from "@medusajs/framework/workflows-sdk";
-import { useQueryGraphStep } from "@medusajs/medusa/core-flows";
-import { syncProductsStep, SyncProductsStepInput } from "./steps/sync-products";
-import { deleteProductsFromMeilisearchStep } from "./steps/delete-products-from-meilisearch";
-import { productValidators } from "@medusajs/framework/utils";
+} from "@medusajs/framework/workflows-sdk"
+import { useQueryGraphStep } from "@medusajs/medusa/core-flows"
+import { syncProductsStep, SyncProductsStepInput } from "./steps/sync-products"
+import { deleteProductsFromMeilisearchStep } from "./steps/delete-products-from-meilisearch"
+import { productValidators } from "@medusajs/framework/utils"
+import { ProductDTO } from "@medusajs/framework/types"
 
 type SyncProductsWorkflowInput = {
-  filters?: Record<string, unknown>;
-  limit?: number;
-  offset?: number;
-};
+  filters?: Record<string, unknown>
+  limit?: number
+  offset?: number
+}
 
 export const syncProductsWorkflow = createWorkflow(
   "sync-products",
@@ -37,41 +38,39 @@ export const syncProductsWorkflow = createWorkflow(
         skip: offset,
       },
       filters,
-    });
+    })
 
     const { publishedProducts, unpublishedProductsToDelete } = transform(
       {
         products,
       },
-      (data) => {
-        const publishedProducts: SyncProductsStepInput["products"] = [];
-        const unpublishedProductsToDelete: string[] = [];
+      (data: any) => {
+        const publishedProducts: SyncProductsStepInput["products"] = []
+        const unpublishedProductsToDelete: string[] = []
 
         data.products.forEach((product) => {
           if (product.status === "published") {
-            const { status, ...rest } = product;
-            publishedProducts.push(
-              rest as SyncProductsStepInput["products"][0],
-            );
+            const { status, ...rest } = product
+            publishedProducts.push(rest as SyncProductsStepInput["products"][0])
           } else {
-            unpublishedProductsToDelete.push(product.id);
+            unpublishedProductsToDelete.push(product.id)
           }
-        });
+        })
 
         return {
           publishedProducts,
           unpublishedProductsToDelete,
-        };
+        }
       },
-    );
+    )
 
-    syncProductsStep({ products: publishedProducts });
+    syncProductsStep({ products: publishedProducts })
 
-    deleteProductsFromMeilisearchStep({ ids: unpublishedProductsToDelete });
+    deleteProductsFromMeilisearchStep({ ids: unpublishedProductsToDelete })
 
     return new WorkflowResponse({
-      products,
-      metadata,
-    });
+      products: products as unknown as ProductDTO[],
+      metadata: metadata as any,
+    })
   },
-);
+)

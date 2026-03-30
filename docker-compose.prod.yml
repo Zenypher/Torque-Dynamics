@@ -1,0 +1,66 @@
+version: "3.8"
+
+services:
+  # Medusa Backend
+  medusa:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: torque-backend-prod
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      STORE_CORS: ${STORE_CORS}
+      ADMIN_CORS: ${ADMIN_CORS}
+      AUTH_CORS: ${AUTH_CORS}
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      MEILISEARCH_HOST: ${MEILISEARCH_HOST}
+      MEILISEARCH_API_KEY: ${MEILISEARCH_API_KEY}
+      MEILISEARCH_PRODUCT_INDEX_NAME: ${MEILISEARCH_PRODUCT_INDEX_NAME:-products}
+      MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_FILE_URL: ${S3_FILE_URL}
+      S3_REGION: ${S3_REGION}
+      S3_BUCKET: ${S3_BUCKET}
+      DISABLE_MEDUSA_ADMIN: ${DISABLE_MEDUSA_ADMIN:-false}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+    ports:
+      - "9000:9000"
+    restart: always
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Next.js Storefront
+  storefront:
+    build:
+      context: ./storefront
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
+        NEXT_PUBLIC_STRIPE_KEY: ${NEXT_PUBLIC_STRIPE_KEY}
+        NEXT_PUBLIC_MEILISEARCH_HOST: ${NEXT_PUBLIC_MEILISEARCH_HOST}
+        NEXT_PUBLIC_MEILISEARCH_API_KEY: ${NEXT_PUBLIC_MEILISEARCH_API_KEY}
+        NEXT_PUBLIC_MEILISEARCH_INDEX_NAME: ${NEXT_PUBLIC_MEILISEARCH_INDEX_NAME:-products}
+        MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
+    container_name: torque-storefront-prod
+    depends_on:
+      - medusa
+    environment:
+      NODE_ENV: production
+      MEDUSA_BACKEND_URL: ${MEDUSA_BACKEND_URL}
+      NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY: ${NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}
+      NEXT_PUBLIC_STRIPE_KEY: ${NEXT_PUBLIC_STRIPE_KEY}
+      NEXT_PUBLIC_MEILISEARCH_HOST: ${NEXT_PUBLIC_MEILISEARCH_HOST}
+      NEXT_PUBLIC_MEILISEARCH_API_KEY: ${NEXT_PUBLIC_MEILISEARCH_API_KEY}
+      NEXT_PUBLIC_MEILISEARCH_INDEX_NAME: ${NEXT_PUBLIC_MEILISEARCH_INDEX_NAME:-products}
+    ports:
+      - "8000:8000"
+    restart: always

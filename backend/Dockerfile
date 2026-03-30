@@ -1,30 +1,66 @@
-FROM node:20-alpine AS base
-RUN corepack enable && corepack prepare pnpm@latest --activate
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
+# Multi-stage build for Medusa backend
+FROM node:20-alpine AS dependencies
 WORKDIR /app
 
-# Stage 1: Dependencies
-FROM base AS deps
-COPY pnpm-lock.yaml package.json ./
-# Uses a cache mount for faster pnpm installs
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+# Install pnpm
+RUN npm install -g pnpm
 
-# Stage 2: Build
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
+# Copy pnpm-lock.yaml first for better caching
+COPY pnpm-lock.yaml ./
+
+# Install dependencies
+COPY package.json ./
+RUN pnpm install --frozen-lockfile --shamefully-hoist
+
+# Build stage
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy dependencies from dependencies stage
+COPY --from=dependencies /app/node_modules ./node_modules
+
+# Copy source code
 COPY . .
-RUN pnpm run build
 
-# Stage 3: Runner
-FROM base AS runner
+# Build the application
+RUN pnpm build
+
+# Runtime stage
+FROM node:20-alpine
 WORKDIR /app
-ENV NODE_ENV production
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./app/medusa-config.js ./
 
+# Install pnpm
+RUN npm install -g pnpm
+
+# Set NODE_ENV to production
+ENV NODE_ENV=production
+
+# Install dumb-init to handle signals properly
+RUN apk add --no-cache dumb-init
+
+# Copy package files
+COPY package.json pnpm-lock.yaml ./
+
+# Install production dependencies only
+RUN pnpm install --prod --frozen-lockfile --shamefully-hoist
+
+# ts-node is required by @medusajs/cli for loading TypeScript config/modules at runtime
+RUN pnpm add -P ts-node
+
+# Copy built application from builder stage
+COPY --from=builder /app/.medusa ./.medusa
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/medusa-config.ts ./
+COPY --from=builder /app/tsconfig.json ./
+
+# Expose the default Medusa port
 EXPOSE 9000
-# Runs migrations then starts the backend
-CMD ["sh", "-c", "pnpm exec medusa migrations run && pnpm start"]
+
+# Use dumb-init to run the application
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["pnpm", "start"]
