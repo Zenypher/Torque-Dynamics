@@ -50,9 +50,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "pub-ed8aae759739459abba6d4e75beece3b.r2.dev",
-        port: "",
-        pathname: "/**",
+        hostname: "pub-59a1ac8743a2435da97041d6abc4f37f.r2.dev",
       },
       {
         protocol: "http",
@@ -74,3 +72,9 @@ const nextConfig = {
 }
 
 module.exports = nextConfig
+
+// nextConfig.images.remotePatterns.map((pattern) => {
+//   console.log(
+//     `DEBUG: protocol ${pattern.protocol} | hostname: ${pattern.hostname} | port ${pattern.port} | pathname ${pattern.pathname}`
+//   )
+// })

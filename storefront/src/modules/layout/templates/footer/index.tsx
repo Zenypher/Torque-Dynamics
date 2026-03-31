@@ -34,21 +34,43 @@ export default async function Footer() {
           {[
             {
               title: "Shop",
-              links: ["All Parts", "Brakes", "Engine", "Suspension", "Deals"],
+              subtitles: [
+                { name: "All Parts", link: "/store" },
+                { name: "Brakes", link: "/categories/brakes" },
+                { name: "Engine", link: "/categories/engine-and-drivetrain" },
+                {
+                  name: "Suspensions",
+                  link: "/categories/suspension-and-steering",
+                },
+              ],
             },
             {
               title: "Support",
-              links: [
-                "Contact Us",
-                "Shipping Info",
-                "Returns",
-                "Fitment Help",
-                "FAQ",
+              subtitles: [
+                {
+                  name: "Conctact Us",
+                  link: "/contact",
+                },
+                {
+                  name: "Shipping Info",
+                  link: "#",
+                },
+                { name: "Returns", link: "#" },
+                {
+                  name: "Fitment Help",
+                  link: "#",
+                },
+                { name: "FAQ", link: "#" },
               ],
             },
             {
               title: "Company",
-              links: ["About Us", "Careers", "Blog", "Affiliate Program"],
+              subtitles: [
+                { name: "About Us", link: "/about" },
+                { name: "Careers", link: "#" },
+                { name: "Blog", link: "#" },
+                { name: "Affiliate Program", link: "#" },
+              ],
             },
           ].map((col) => (
             <div key={col.title}>
@@ -56,13 +78,13 @@ export default async function Footer() {
                 {col.title}
               </h4>
               <ul className="space-y-2.5">
-                {col.links.map((link) => (
-                  <li key={link}>
+                {col.subtitles.map((subtitle) => (
+                  <li key={subtitle.name}>
                     <LocalizedClientLink
-                      href="#"
+                      href={subtitle.link}
                       className="text-sm hover:text-primary transition-colors"
                     >
-                      {link}
+                      {subtitle.name}
                     </LocalizedClientLink>
                   </li>
                 ))}

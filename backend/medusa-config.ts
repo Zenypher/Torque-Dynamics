@@ -93,10 +93,19 @@ module.exports = defineConfig({
             interval: 1000,
           },
           optimizeDeps: {
-          force: true,
+            force: true,
+          },
         },
-        }
       }
     },
   },
 })
+
+// console.log(`DEBUG: Connecting to R2 Bucket ${process.env.S3_FILE_URL}`)
+// console.log(`DEBUG: Connecting to R2 Bucket ${process.env.S3_ACCESS_KEY_ID}`)
+// console.log(
+//   `DEBUG: Connecting to R2 Bucket ${process.env.S3_SECRET_ACCESS_KEY}`,
+// )
+// console.log(`DEBUG: Connecting to R2 Bucket ${process.env.S3_REGION}`)
+// console.log(`DEBUG: Connecting to R2 Bucket ${process.env.S3_BUCKET}`)
+// console.log(`DEBUG: Connecting to R2 Bucket ${process.env.S3_ENDPOINT}`)

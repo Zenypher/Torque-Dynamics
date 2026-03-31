@@ -67,6 +67,10 @@ RUN pnpm install --prod --frozen-lockfile --shamefully-hoist
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 
+# Copy config and config helpers
+COPY --from=builder /app/next.config.js ./next.config.js
+COPY --from=builder /app/check-env-variables.js ./check-env-variables.js
+
 # Expose port 8000 (default storefront port)
 EXPOSE 8000
 
