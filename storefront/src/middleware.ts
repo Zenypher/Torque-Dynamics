@@ -119,6 +119,13 @@ export async function middleware(request: NextRequest) {
   const urlHasCountryCode =
     countryCode && request.nextUrl.pathname.split("/")[1].includes(countryCode)
 
+  const userAgent = request.headers.get("user-agent") || ""
+  const isBot = /bot|googlebot|crawler|spider|pagespeed/i.test(userAgent)
+
+  if (isBot) {
+    return NextResponse.next()
+  }
+
   // if one of the country codes is in the url and the cache id is set, return next
   if (urlHasCountryCode && cacheIdCookie) {
     return NextResponse.next()

@@ -1,0 +1,15 @@
+# Allow all search engines
+User-agent: *
+
+# Block private/utility pages
+Disallow: /cart
+Disallow: /checkout
+Disallow: /account
+Disallow: /api/
+Disallow: /admin/
+
+# Block internal search results to avoid duplicate content
+Disallow: /search
+
+# Link to your sitemap (update this URL!)
+Sitemap: https://www.yourdomain.com/sitemap.xml
