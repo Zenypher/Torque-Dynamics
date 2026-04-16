@@ -6,6 +6,7 @@ import { searchClient } from "@lib/config"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { Search } from "lucide-react"
+import PlaceholderImage from "@modules/common/icons/placeholder-image"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 
 type Hit = {
@@ -13,7 +14,7 @@ type Hit = {
   title: string
   description: string
   handle: string
-  thumbnail: string
+  thumbnail?: string | null
   categories: {
     id: string
     name: string
@@ -70,13 +71,19 @@ const Hit = ({ hit }: { hit: Hit }) => {
       href={`/products/${hit.handle}`}
       className="flex flex-row gap-x-3 p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200 border-b border-neutral-200 last:border-b-0 bg-background"
     >
-      <Image
-        src={hit.thumbnail}
-        alt={hit.title}
-        width={48}
-        height={48}
-        className="aspect-square object-cover rounded"
-      />
+      {hit.thumbnail ? (
+        <Image
+          src={hit.thumbnail}
+          alt={hit.title}
+          width={48}
+          height={48}
+          className="aspect-square object-cover rounded"
+        />
+      ) : (
+        <div className="w-12 h-12 flex items-center justify-center rounded bg-neutral-100 text-neutral-500">
+          <PlaceholderImage size={20} />
+        </div>
+      )}
       <div className="flex flex-col gap-y-1 flex-1 min-w-0">
         <h3 className="text-sm font-medium text-foreground truncate">
           {hit.title}
